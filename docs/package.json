@@ -1,5 +1,6 @@
 {
   "name": "landing_page",
+  "homepage": "https://bz14.github.io/AASTU-PC-Registration/",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -12,6 +13,7 @@
   "dependencies": {
     "emailjs-com": "^3.2.0",
     "framer-motion": "^11.5.6",
+    "landing_page": "file:",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.3.0",
