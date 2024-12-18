@@ -1,37 +1,47 @@
-name: Deploy Landing Page to GitHub Pages
+name: Deploy
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
-  deploy:
+  build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out the code
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v3
 
-      # Step 2: Set up Node.js
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v3
-        with:
-          node-version: "16"
 
-      # Step 3: Install dependencies in the landingpage directory
       - name: Install dependencies
-        run: npm install
-        working-directory: ./docs
+        uses: bahmutov/npm-install@v1
 
-      # Step 4: Build the project
-      - name: Build the project
+      - name: Build project
         run: npm run build
-        working-directory: ./docs
 
-      # Step 5: Deploy to GitHub Pages
+      - name: Upload production-ready build files
+        uses: actions/upload-artifact@v3
+        with:
+          name: production-files
+          path: ./docs/dist
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: production-files
+          path: ./docs/dist
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
