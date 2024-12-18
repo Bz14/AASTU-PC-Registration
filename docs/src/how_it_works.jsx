@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import landing from './assets/landing-Photoroom.png';
+import admin from './assets/1.jpg'
+import superAdmin from './assets/2.png'
 
 const HowItWorks = () => {
   const [visibleSections, setVisibleSections] = useState([false, false, false]);
@@ -96,7 +98,7 @@ const HowItWorks = () => {
           </div>
           <div className="flex-1 md:pr-8 md:order-last order-first mb-8 md:mb-0">
             <img
-              src={landing}
+              src={admin}
               alt="Admin"
               className="rounded-lg shadow-lg w-full md:w-auto"
             />
@@ -128,7 +130,7 @@ const HowItWorks = () => {
           </div>
           <div className="flex-1 md:pl-8 md:order-last order-first mb-8 md:mb-0">
             <img
-              src={landing}
+              src={superAdmin}
               alt="Super Admin"
               className="rounded-lg shadow-lg w-full md:w-auto"
             />

@@ -4,7 +4,7 @@ import LandingPage from './landing_page'
 import Services from './service'
 import HowItWorks from './how_it_works'
 import Footer from './footer'
-import AboutUs from './about_us'
+import AboutUs from './about'
 
 function App() {
  

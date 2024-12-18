@@ -8,7 +8,7 @@ const AboutUs = () => {
         <div className='flex-1 md:pr-8 mb-8 md:mb-0'>
           <h2 className='text-3xl md:text-4xl font-bold text-titleColor mb-4'>About Us</h2>
           <p className='text-paragraphColor mb-4 text-sm md:text-base'>
-            We are a group of 10 Kuraz interns with diverse roles, including Front-end Developers, Back-end Developers, and Mobile Developers. Together, we are dedicated to building a robust and user-friendly system to enhance PC registration security.
+            We are a group of 5 AASTU 5th year Software Engineering Student with diverse roles, including Front-end Developers, Back-end Developers, and Mobile Developers. Together, we are dedicated to building a robust and user-friendly system to enhance PC registration security.
           </p>
           <p className='text-paragraphColor mb-4 text-sm md:text-base'>
             Our team is passionate about technology and committed to delivering high-quality solutions that meet user needs. We work collaboratively, leveraging our individual skills and experiences to create a seamless experience for our users.
