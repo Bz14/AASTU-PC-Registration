@@ -47,6 +47,8 @@ const RateUs = () => {
     //   </button>
     //   {submitted && <p className="confirmation-message">Thank you for your feedback!</p>}
     // </div>
+    //react is javascript library.  we use for our pc registrationn 
+
   );
 };
 
