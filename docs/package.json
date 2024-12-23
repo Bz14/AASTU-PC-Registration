@@ -1,5 +1,6 @@
 {
   "name": "landing_page",
+  "homepage": "https://bz14.github.io/AASTU-PC-Registration/",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,27 +8,37 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "echo 'No tests yet' && exit 0"
   },
   "dependencies": {
     "emailjs-com": "^3.2.0",
     "framer-motion": "^11.5.6",
+    "landing_page": "file:",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.3.0",
     "react-router-dom": "^6.26.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-react": "^7.26.3",
+    "@babel/register": "^7.25.9",
     "@eslint/js": "^9.9.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.20",
+    "babel-jest": "^29.7.0",
     "eslint": "^9.9.0",
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
+    "jest": "^29.7.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.12",
     "vite": "^5.4.11"
