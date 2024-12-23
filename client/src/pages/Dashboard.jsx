@@ -90,7 +90,7 @@ const Dashboard = () => {
             <h2 className="text-lg font-semibold mb-2">PC Registrations Over the Year</h2>
             <BarChart data={barData2} />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          {/* <div className="grid grid-cols-2 gap-4">
             <div className="p-4 rounded-md shadow-md">
               <h2 className="text-lg font-semibold mb-2">Admin Gender Distribution</h2>
               <PieChart data={pieData1} />
@@ -99,7 +99,7 @@ const Dashboard = () => {
               <h2 className="text-lg font-semibold mb-2">PC In/Out Status</h2>
               <PieChart data={pieData2} />
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="p-4 rounded-md shadow-md flex flex-col gap-2 " style={{ border: 'solid var(--text-color) 2px' }}>
