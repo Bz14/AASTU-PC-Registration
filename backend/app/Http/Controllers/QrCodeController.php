@@ -27,13 +27,20 @@ class QrCodeController extends Controller
             $qrCodeImage = QrCode::format('png')->size(300)->generate($serial_number);
             $qrCodePath = 'qrcodes/' . $serial_number . '.png';
 
+            $fullPath = public_path($qrCodePath);
+            file_put_contents($fullPath, $qrCodeImage);
+
+            $qrCodeUrl = url($qrCodePath);
+            \Log::info($qrCodeUrl);
+
             // Save the QR code to storage
-            Storage::disk('public')->put($qrCodePath, $qrCodeImage);
-
+            //Storage::disk('public')->put($qrCodePath, $qrCodeImage);
+            //\Log::info($qrCodePath);
             // Generate URL to access the QR code
-            $qrCodeUrl = Storage::url($qrCodePath);
+            //$qrCodeUrl = Storage::url($qrCodePath);
+            //\Log::info($qrCodeUrl);
 
-            return response()->json(['qrCodeUrl' => $qrCodeUrl]);
+            return response()->json(['qrCodeUrl' => $qrCodePath]);
         } catch (\Exception $e) {
             // Log the error for debugging
             \Log::error('QR Code Generation Error: ' . $e->getMessage());
@@ -43,8 +50,8 @@ class QrCodeController extends Controller
 
     public function getQRCode($serial_number)
     {
-        $qrCodePath = storage_path('app/public/qrcodes/' . $serial_number . '.png');
-
+        $qrCodePath = public_path('qrcodes/' . $serial_number . '.png');
+        \Log::info($qrCodePath);
         if (file_exists($qrCodePath)) {
             return response()->file($qrCodePath);
         }

@@ -26,7 +26,7 @@ const QrCodePage = () => {
                 const response = await axios.get(`http://127.0.0.1:8000/api/qrcode/generate/${serial_number}`);
                 console.log("Response data:", response.data); // Debugging response data
 
-                const qrCodeUrl = `http://127.0.0.1:8000${response.data.qrCodeUrl}`;
+                const qrCodeUrl = `http://127.0.0.1:8000/${response.data.qrCodeUrl}`;
                 console.log("QR Code URL:", qrCodeUrl); // Log the URL
                 setQrCodeUrl(qrCodeUrl);
                 setError(null);
@@ -151,6 +151,7 @@ const QrCodePage = () => {
             {error && <p className="text-red-500">{error}</p>}
             {qrCodeUrl ? (
                 <>
+                    {console.log(qrCodeUrl)}
                     <img src={qrCodeUrl} alt="QR Code" className="mb-4 w-64 h-64" onError={() => setError("Failed to load QR code image.")} />
                     <button
                         onClick={downloadQRCode}
