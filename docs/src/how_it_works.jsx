@@ -4,7 +4,6 @@ import landing from './assets/landing-Photoroom.png';
 import admin from './assets/1.jpg'
 import superAdmin from './assets/2.png'
 
-
 const HowItWorks = () => {
   const [visibleSections, setVisibleSections] = useState([false, false, false]);
 
