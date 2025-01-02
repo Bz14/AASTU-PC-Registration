@@ -87,3 +87,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 - Thanks to the contributors for their valuable input and efforts in bringing this project to life.
 - Special thanks to the communities of React, Vite, Tailwind CSS, PHP, and Laravel for their resources and support.
+
