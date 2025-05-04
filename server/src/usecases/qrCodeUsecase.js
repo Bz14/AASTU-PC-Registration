@@ -1,4 +1,4 @@
-const studentRepository = require("../repositories/studentRepository");
+const studentRepository = require("../repositories/studentRepositories");
 const { generateQrCode } = require("../utils/generateQrCode");
 const { scanQrCode } = require("../utils/scanQrCode");
 const fs = require("fs");

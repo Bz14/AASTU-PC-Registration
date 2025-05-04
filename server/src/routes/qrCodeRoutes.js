@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const qrCodeController = require("../controllers/qrCodeController");
-const authMiddleware = require("../middlewares/authMiddleware");
+const authMiddleware = require("../middlewares/authMiddlewares");
 const validate = require("../middlewares/validate");
 const { check } = require("express-validator");
 

@@ -5,6 +5,8 @@ const register = async (req, res) => {
     const { student, pc } = await studentUsecase.register(req.body);
     res.status(201).json({ student, pc });
   } catch (error) {
+    console.log(req.body);
+    console.error("Error in register:", error);
     res.status(400).json({ error: error.message });
   }
 };
@@ -20,7 +22,8 @@ const search = async (req, res) => {
 
 const showAll = async (req, res) => {
   try {
-    const students = await studentUsecase.getAll();
+    const searchQuery = req.query.search || "";
+    const students = await studentUsecase.getAll(searchQuery);
     res.status(200).json(students);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -61,6 +64,26 @@ const deleteStudent = async (req, res) => {
   }
 };
 
+const qrCodeGenerate = async (req, res) => {
+  try {
+    const qrCodeUrl = await studentUsecase.generateQrCode(req.params.id);
+    res.status(200).json({ qrCodeUrl });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const showBySerialNumber = async (req, res) => {
+  try {
+    const student = await studentUsecase.getBySerialNumber(
+      req.params.serial_number
+    );
+    res.status(200).json(student);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+};
+
 module.exports = {
   register,
   search,
@@ -68,4 +91,6 @@ module.exports = {
   show,
   update,
   delete: deleteStudent,
+  qrCodeGenerate,
+  showBySerialNumber,
 };

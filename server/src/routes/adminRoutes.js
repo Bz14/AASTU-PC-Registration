@@ -1,13 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const adminController = require("../controllers/adminController");
-const authMiddleware = require("../middlewares/authMiddleware");
+const adminController = require("../controllers/adminControllers");
+const authMiddleware = require("../middlewares/authMiddlewares");
 const validate = require("../middlewares/validate");
 const upload = require("../utils/fileUpload");
 const { check } = require("express-validator");
 
 const adminValidation = [
-  check("admin_id").notEmpty().withMessage("Admin ID is required"),
   check("username").notEmpty().withMessage("Username is required"),
   check("password")
     .isLength({ min: 6 })
@@ -47,7 +46,7 @@ router.get("/admins/search", authMiddleware, adminController.search);
 router.get("/admins/:id", authMiddleware, adminController.getAdminById);
 router.post(
   "/admins/register",
-  authMiddleware,
+  // authMiddleware,
   upload.single("profile_picture"),
   adminValidation,
   validate,

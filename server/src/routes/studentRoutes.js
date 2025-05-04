@@ -1,19 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const studentController = require("../controllers/studentController");
-const authMiddleware = require("../middlewares/authMiddleware");
+const authMiddleware = require("../middlewares/authMiddlewares");
 const validate = require("../middlewares/validate");
 const { check } = require("express-validator");
 
 const studentValidation = [
-  check("student_id").notEmpty().withMessage("Student ID is required"),
   check("student_name").notEmpty().withMessage("Student name is required"),
   check("phoneNumber").notEmpty().withMessage("Phone number is required"),
   check("email").isEmail().withMessage("Invalid email"),
   check("pc_brand").notEmpty().withMessage("PC brand is required"),
   check("serial_number").notEmpty().withMessage("Serial number is required"),
   check("pc_color").notEmpty().withMessage("PC color is required"),
-  check("qr_code").notEmpty().withMessage("QR code is required"),
   check("status").notEmpty().withMessage("Status is required"),
 ];
 

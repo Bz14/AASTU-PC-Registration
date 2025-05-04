@@ -86,6 +86,16 @@ const getChartData = async (req, res) => {
   }
 };
 
+const search = async (req, res) => {
+  try {
+    const { query } = req.query;
+    const admins = await adminUsecase.search(query);
+    res.status(200).json(admins);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   login,
   getAdmins,
@@ -94,4 +104,5 @@ module.exports = {
   updateAdmin,
   deleteAdmin,
   getChartData,
+  search,
 };

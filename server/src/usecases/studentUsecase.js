@@ -1,11 +1,13 @@
 // File: usecases/studentUsecase.js
-const studentRepository = require("../repositories/studentRepository");
-const pcRepository = require("../repositories/pcRepository");
+const studentRepository = require("../repositories/studentRepositories");
+const pcRepository = require("../repositories/pcRepositories");
 const { generateQrCode } = require("../utils/generateQrCode");
 const { sendQrCodeEmail } = require("../utils/sendQrCodeEmail");
 
 class StudentUsecase {
   async register(data) {
+    const qrCodeBase64 = await generateQrCode(data.serial_number);
+
     const student = await studentRepository.create({
       student_id: data.student_id,
       student_name: data.student_name,
@@ -15,7 +17,7 @@ class StudentUsecase {
       pc_brand: data.pc_brand,
       pc_color: data.pc_color,
       status: data.status || "in",
-      qr_code: null,
+      qr_code: qrCodeBase64,
     });
 
     const pc = await pcRepository.create({
@@ -25,12 +27,8 @@ class StudentUsecase {
       owner_id: student._id,
     });
 
-    const qrCodeBase64 = await generateQrCode(data.serial_number);
-    student.qr_code = qrCodeBase64;
-    await student.save();
-
     // Send QR code email
-    await sendQrCodeEmail(data.email, qrCodeBase64);
+    // await sendQrCodeEmail(data.email, qrCodeBase64);
 
     return { student, pc };
   }
@@ -56,8 +54,9 @@ class StudentUsecase {
     return Array.from(studentMap.values());
   }
 
-  async getAll() {
-    const students = await studentRepository.findAll();
+  async getAll(searchQuery) {
+    const students = await studentRepository.findAll(searchQuery);
+    if (!students || students.length === 0) return [];
     const response = await Promise.all(
       students.map(async (student) => {
         const pc = await pcRepository.findByOwnerId(student._id);

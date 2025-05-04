@@ -1,12 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const pcController = require("../controllers/pcController");
-const authMiddleware = require("../middlewares/authMiddleware");
+const authMiddleware = require("../middlewares/authMiddlewares");
 const validate = require("../middlewares/validate");
 const { check } = require("express-validator");
 
 const pcValidation = [
-  check("pc_id").notEmpty().withMessage("PC ID is required"),
   check("serial_number").notEmpty().withMessage("Serial number is required"),
   check("owner_id").notEmpty().withMessage("Owner ID is required"),
   check("pc_brand").notEmpty().withMessage("PC brand is required"),

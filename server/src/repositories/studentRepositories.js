@@ -6,8 +6,17 @@ class StudentRepository {
     return student.save();
   }
 
-  async findAll() {
-    return Student.find();
+  async findAll(searchQuery) {
+    if (searchQuery) {
+      return Student.find({
+        $or: [
+          { student_name: { $regex: searchQuery, $options: "i" } },
+          { student_id: { $regex: searchQuery, $options: "i" } },
+          { phoneNumber: { $regex: searchQuery, $options: "i" } },
+          { serial_number: { $regex: searchQuery, $options: "i" } },
+        ],
+      });
+    }
   }
 
   async findById(student_id) {

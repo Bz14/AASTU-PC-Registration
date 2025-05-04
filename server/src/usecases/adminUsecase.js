@@ -1,4 +1,4 @@
-const adminRepository = require("../repositories/adminRepository");
+const adminRepository = require("../repositories/adminRepositories");
 const bcrypt = require("bcrypt");
 
 class AdminUseCase {
@@ -75,6 +75,11 @@ class AdminUseCase {
         ],
       },
     };
+  }
+  async search(query) {
+    const admins = await adminRepository.search(query);
+    if (!admins) throw new Error("No admins found");
+    return admins;
   }
 }
 

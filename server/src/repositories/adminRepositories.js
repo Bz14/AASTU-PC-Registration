@@ -41,6 +41,16 @@ class AdminRepository {
       },
     ]);
   }
+
+  async search(query) {
+    return Admin.find({
+      $or: [
+        { username: { $regex: query, $options: "i" } },
+        { email: { $regex: query, $options: "i" } },
+        { phoneNumber: { $regex: query, $options: "i" } },
+      ],
+    }).select("-password");
+  }
 }
 
 module.exports = new AdminRepository();

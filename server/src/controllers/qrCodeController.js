@@ -49,4 +49,20 @@ const showBySerialNumber = async (req, res) => {
   }
 };
 
-module.exports = { generateQrCode, getQRCode, scanQrCode, showBySerialNumber };
+const sendQrCodeToEmail = async (req, res) => {
+  try {
+    const { serial_number } = req.params;
+    const qrCodeUrl = await qrCodeUsecase.generateQrCode(serial_number);
+    res.status(200).json({ message: "QR code sent to email", qrCodeUrl });
+  } catch (error) {
+    console.error("Email Sending Error:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+module.exports = {
+  generateQrCode,
+  getQRCode,
+  scanQrCode,
+  showBySerialNumber,
+  sendQrCodeToEmail,
+};

@@ -1,4 +1,4 @@
-const pcRepository = require("../repositories/pcRepository");
+const pcRepository = require("../repositories/pcRepositories");
 const Student = require("../models/Student");
 
 class PCUsecase {

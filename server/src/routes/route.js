@@ -1,18 +1,20 @@
 // File: server.js
 const express = require("express");
 const dotenv = require("dotenv");
-const adminRoutes = require("./routes/adminRoutes");
-const pcRoutes = require("./routes/pcRoutes");
-const qrCodeRoutes = require("./routes/qrCodeRoutes");
-const studentRoutes = require("./routes/studentRoutes");
-const errorHandler = require("./utils/errorHandler");
+const adminRoutes = require("./adminRoutes");
+const pcRoutes = require("./pcRoutes");
+const qrCodeRoutes = require("./qrCodeRoutes");
+const studentRoutes = require("./studentRoutes");
+const errorHandler = require("../utils/errorHandler");
 const path = require("path");
 const connectToDb = require("../config/db");
+const cors = require("cors");
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 

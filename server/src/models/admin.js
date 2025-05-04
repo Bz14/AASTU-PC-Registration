@@ -10,7 +10,7 @@ const adminSchema = new mongoose.Schema(
     profile_picture: { type: String },
     phoneNumber: { type: String },
   },
-  { timestamps: true, _id: false }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Admin", adminSchema);
