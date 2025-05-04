@@ -26,6 +26,7 @@ const showAll = async (req, res) => {
     const students = await studentUsecase.getAll(searchQuery);
     res.status(200).json(students);
   } catch (error) {
+    console.error("Error in showAll:", error);
     res.status(500).json({ error: error.message });
   }
 };

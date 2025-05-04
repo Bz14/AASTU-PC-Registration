@@ -7,6 +7,7 @@ const adminAuthMiddleware = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({ error: "No token provided" });
     }
+    console.log(token, process.env.JWT_SECRET);
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (!decoded.id || !["super_admin", "admin"].includes(decoded.role)) {
@@ -15,9 +16,7 @@ const adminAuthMiddleware = async (req, res, next) => {
         .json({ error: "Access denied: Admin role required" });
     }
 
-    const admin = await Admin.findOne({ admin_id: decoded.id }).select(
-      "-password"
-    );
+    const admin = await Admin.findOne({ _id: decoded.id }).select("-password");
     if (!admin) {
       return res.status(401).json({ error: "Admin not found" });
     }
@@ -28,6 +27,7 @@ const adminAuthMiddleware = async (req, res, next) => {
     };
     next();
   } catch (error) {
+    console.error("Error in adminAuthMiddleware:", error);
     res.status(401).json({ error: "Invalid token" });
   }
 };

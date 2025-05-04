@@ -6,6 +6,10 @@ class PCRepository {
     return PC.find();
   }
 
+  async findByOwnerId(owner_id) {
+    return PC.findOne({ owner_id });
+  }
+
   async findById(pc_id) {
     return PC.findOne({ pc_id });
   }

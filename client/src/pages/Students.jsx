@@ -1,231 +1,253 @@
-import React, { useState, useEffect } from "react";
-import { FaUserPlus, FaSearch, FaEdit, FaTrash, FaSave } from "react-icons/fa";
+import { useState } from "react";
+import {
+  FaUserPlus,
+  FaSearch,
+  FaEdit,
+  FaTrash,
+  FaQrcode,
+} from "react-icons/fa";
 import axios from "axios";
-import Settings from "./Settings";
-import { FaQrcode } from "react-icons/fa";
-
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
+const fetchStudents = async (searchTerm = "") => {
+  const token = localStorage.getItem("token");
+  console.log("Token:", token);
+
+  const response = await axios.get(
+    `http://127.0.0.1:8000/api/students?search=${searchTerm}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  console.log("Fetched students:", response.data);
+  return response.data;
+};
+
 const Students = () => {
+  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
-  const [students, setStudents] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
   const [creatingNew, setCreatingNew] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [isStatusVisible, setIsStatusVisible] = useState(false);
-  const [validationError, setValidationError] = useState(""); // State for validation error
+  const [validationError, setValidationError] = useState("");
+  const [tempStudent, setTempStudent] = useState(null);
 
-  // Fetch students from the API on component mount
-  useEffect(() => {
-    axios
-      .get("http://127.0.0.1:8000/api/students")
-      .then((response) => {
-        console.log("Students:", response.data);
-        setStudents(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching students:", error);
+  const {
+    data: students = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["students", searchTerm],
+    queryFn: () => fetchStudents(searchTerm),
+  });
+
+  const addStudentMutation = useMutation({
+    mutationFn: (newStudent) => {
+      const token = localStorage.getItem("token");
+      return axios.post(
+        "http://127.0.0.1:8000/api/students/register",
+        newStudent,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["students"]);
+      setCreatingNew(false);
+      setEditingIndex(null);
+      setTempStudent(null);
+      setValidationError("");
+    },
+    onError: () => {
+      setValidationError("Failed to add student. Please try again.");
+    },
+  });
+
+  const deleteStudentMutation = useMutation({
+    mutationFn: (id) => {
+      const token = localStorage.getItem("token");
+      return axios.delete(`http://127.0.0.1:8000/api/students/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-  }, []);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["students"]);
+    },
+  });
 
-  const isFormValid = Object.values(students).every((field) => field !== "");
+  const updateStudentMutation = useMutation({
+    mutationFn: ({ id, updatedStudent }) => {
+      const token = localStorage.getItem("token");
+      return axios.put(
+        `http://127.0.0.1:8000/api/students/${id}`,
+        updatedStudent,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["students"]);
+      setEditingIndex(null);
+      setTempStudent(null);
+      setValidationError("");
+    },
+    onError: () => {
+      setValidationError("Failed to update student. Please try again.");
+    },
+  });
 
-    if (!isFormValid) {
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleAddRow = () => {
+    setTempStudent({
+      student_name: "",
+      student_id: "",
+      serial_number: "",
+      pc_brand: "",
+      pc_color: "",
+      phoneNumber: "",
+      email: "",
+      status: "in",
+    });
+    setCreatingNew(true);
+    setEditingIndex(students.length); // Set editing index to new row
+    setValidationError("");
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setTempStudent((prev) => ({ ...prev, [name]: value }));
+    setValidationError("");
+  };
+
+  const validateStudent = (student) => {
+    const requiredFields = [
+      "student_name",
+      "student_id",
+      "serial_number",
+      "pc_brand",
+      "pc_color",
+      "phoneNumber",
+      "email",
+    ];
+    return requiredFields.every((field) => student[field]?.trim() !== "");
+  };
+
+  const handleSave = () => {
+    if (!tempStudent) return;
+
+    if (!validateStudent(tempStudent)) {
       setValidationError("Please fill out all fields.");
       return;
     }
 
-  // Fetch students from the API on component mount
-  useEffect(() => {
-    fetchStudents();
-  }, []);
-
-  const fetchStudents = (search = "") => {
-    axios
-      .get(`http://127.0.0.1:8000/api/students/search?search=${search}`)
-      .then((response) => {
-        setStudents(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching students:", error);
-      });
-  };
-
-  const handleSearchChange = (event) => {
-    const value = event.target.value;
-    setSearchTerm(value);
-    fetchStudents(value);
-  };
-
-  const handleAddRow = () => {
-    setStudents([
-      ...students,
-      {
-        student_name: "",
-        student_id: "",
-        serial_number: "",
-        pc_brand: "",
-        pc_color: "",
-        phoneNumber: "",
-        email: "",
-        status: "in",
-      },
-    ]);
-    setEditingIndex(students.length);
-    setCreatingNew(true);
-  };
-
-  const handleInputChange = (event, index) => {
-    const { name, value } = event.target;
-    const updatedStudents = [...students];
-    updatedStudents[index] = { ...updatedStudents[index], [name]: value };
-    setStudents(updatedStudents);
-  };
-
-  const handleSave = (index) => {
-    const student = students[index];
-
-    const formData = {
-      student_id: student.student_id,
-      serial_number: student.serial_number,
-      pc_brand: student.pc_brand,
-      pc_color: student.pc_color,
-      student_name: student.student_name,
-      phoneNumber: student.phoneNumber,
-      email: student.email,
-      status: student.status,
-    };
-
+    const formData = { ...tempStudent };
     if (creatingNew) {
-      axios
-        .post("http://127.0.0.1:8000/api/students/register", formData)
-        .then((response) => {
-          const updatedStudents = [
-            ...students.slice(0, index),
-            response.data,
-            ...students.slice(index + 1),
-          ];
-          setStudents(updatedStudents);
-          setEditingIndex(null);
-          setCreatingNew(false);
-        })
-        .catch((error) => {
-          console.error("Error creating student:", error);
-        });
+      addStudentMutation.mutate(formData);
     } else {
-      axios
-        .put(`http://127.0.0.1:8000/api/students/${editId}`, formData)
-        .then(() => {
-          setStudents((prevStudents) =>
-            prevStudents.map((student, i) =>
-              i === index ? { ...student, ...formData } : student
-            )
-          );
-          setEditingIndex(null);
-        })
-        .catch((error) => {
-          console.error("Error updating student:", error);
-        });
+      updateStudentMutation.mutate({ id: editId, updatedStudent: formData });
     }
   };
 
   const handleEdit = (index) => {
     setEditingIndex(index);
-    const editId = students[index].student_id;
-    setEditId(editId);
+    setEditId(students[index].student_id);
+    setTempStudent({ ...students[index] });
     setCreatingNew(false);
+    setValidationError("");
   };
 
   const handleDelete = (index) => {
     const studentId = students[index].student_id;
-
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this student?"
-    );
-    if (!confirmDelete) return;
-
-    axios
-      .delete(`http://127.0.0.1:8000/api/students/${studentId}`)
-      .then(() => {
-        const updatedStudents = students.filter((_, i) => i !== index);
-        setStudents(updatedStudents);
-      })
-      .catch((error) => {
-        console.error("Error deleting student:", error);
-      });
+    if (window.confirm("Are you sure you want to delete this student?")) {
+      deleteStudentMutation.mutate(studentId);
+    }
   };
 
+  const handleCancel = () => {
+    setEditingIndex(null);
+    setCreatingNew(false);
+    setTempStudent(null);
+    setValidationError("");
+  };
+
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Error loading students.</p>;
+
   return (
-    <div className="navbar min-h-screen p-4">
+    <div className="min-h-screen p-4">
       <div className="flex items-center justify-end mb-8 space-x-2">
         <FaUserPlus
-          className=" text-2xl cursor-pointer hover:text-blue-400 transition duration-300"
+          className="text-2xl cursor-pointer hover:text-blue-400 transition duration-300"
           title="Add New"
           aria-label="Add New Student"
           onClick={handleAddRow}
         />
-        <div className="relative flex items-center navbar rounded-lg border border-blue-500">
+        <div className="relative flex items-center rounded-lg border border-blue-500">
           <input
             type="text"
             placeholder="Search..."
-            className="p-2 navbar rounded-lg placeholder-blue-300 w-64 h-10 flex-1 border-none outline-none focus:border-blue-500 focus:ring-0 transition duration-300"
+            className="p-2 rounded-lg placeholder-blue-300 w-64 h-10 flex-1 border-none outline-none focus:border-blue-500 focus:ring-0 transition duration-300"
             value={searchTerm}
             onChange={handleSearchChange}
           />
-          <FaSearch className=" ml-2 cursor-pointer h-10 mr-2" />
+          <FaSearch className="ml-2 cursor-pointer h-10 mr-2" />
         </div>
       </div>
- {/* Display validation error message */}
- {validationError && (
+      {validationError && (
         <p className="text-red-500 text-center mb-4">{validationError}</p>
       )}
-      <div className="navbar p-6 rounded-lg shadow-lg relative">
+      <div className="p-6 rounded-lg shadow-lg">
         <div className="overflow-x-auto">
           <div className="shadow-2xl p-2 rounded-lg">
-            <table className="min-w-full text-left navbar border-collapse">
+            <table className="min-w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-blue-500">
-                  <th className="p-3 border-b border-blue-500">#</th>
-                  <th className="p-3 border-b border-blue-500">Name</th>
-                  <th className="p-3 border-b border-blue-500">ID Number</th>
-                  <th className="p-3 border-b border-blue-500">
-                    PC Serial Number
-                  </th>
-                  <th className="p-3 border-b border-blue-500">PC Brand</th>
-                  <th className="p-3 border-b border-blue-500">PC Color</th>
-                  <th className="p-3 border-b border-blue-500">Phone NO</th>
-                  <th className="p-3 border-b border-blue-500">Email</th>
-                  <th className="p-3 border-b border-blue-500">Status</th>{" "}
-                  {/* New Status Column */}
-                  <th className="p-3 border-b border-blue-500">Action</th>
-                  {/* <th className="p-3 border-b border-blue-500">Qrcode</th> */}
-                  {/* //Qrcomponents */}
+                  <th className="p-3">#</th>
+                  <th className="p-3">Name</th>
+                  <th className="p-3">ID Number</th>
+                  <th className="p-3">PC Serial Number</th>
+                  <th className="p-3">PC Brand</th>
+                  <th className="p-3">PC Color</th>
+                  <th className="p-3">Phone NO</th>
+                  <th className="p-3">Email</th>
+                  <th className="p-3">Status</th>
+                  <th className="p-3">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {students.length === 0 ? (
+                {students.length === 0 && !creatingNew ? (
                   <tr>
-                    <td colSpan="10" className="text-center">
+                    <td colSpan="10" className="text-center p-2">
                       No students found.
                     </td>
                   </tr>
                 ) : (
-                  students
-                    .filter((student) =>
-                      (student.student_name || '')
-                        .toLowerCase()
-                        .includes(searchTerm.toLowerCase())
-                    )
-                    
-    //                 students.filter((student) => 
-    // (student.student_name || '').toLowerCase().includes(searchTerm.toLowerCase())
-    //               );
-                  
-                    .map((student, index) => (
+                  [
+                    ...students,
+                    ...(creatingNew && tempStudent ? [tempStudent] : []),
+                  ].map((student, index) => {
+                    const isNewRow = creatingNew && index === students.length;
+                    const isEditing = index === editingIndex || isNewRow;
+
+                    return (
                       <tr
-                        key={student.id || index}
-                        className={`navbar border-b border-blue-500 ${
-                          index === editingIndex ? "bg-[#002B6C]" : ""
+                        key={student.id || `new-${index}`}
+                        className={`border-b border-blue-500 ${
+                          isEditing ? "bg-white" : ""
                         }`}
                       >
                         <td className="p-2">{index + 1}</td>
@@ -233,126 +255,153 @@ const Students = () => {
                           <input
                             type="text"
                             name="student_name"
-                            value={student.student_name}
-                            onChange={(event) =>
-                              handleInputChange(event, index)
+                            value={
+                              isEditing
+                                ? tempStudent?.student_name || ""
+                                : student.student_name || ""
                             }
-                            className="navbar p-2 rounded-lg border-none w-full"
-                            disabled={index !== editingIndex}
+                            onChange={handleInputChange}
+                            className="p-2 rounded-lg border-none w-full"
+                            disabled={!isEditing}
                           />
                         </td>
                         <td className="p-2">
                           <input
                             type="text"
                             name="student_id"
-                            value={student.student_id}
-                            onChange={(event) =>
-                              handleInputChange(event, index)
+                            value={
+                              isEditing
+                                ? tempStudent?.student_id || ""
+                                : student.student_id || ""
                             }
-                            className="navbar p-2 rounded-lg border-none w-full"
-                            disabled={index !== editingIndex}
+                            onChange={handleInputChange}
+                            className="p-2 rounded-lg border-none w-full"
+                            disabled={!isEditing}
                           />
                         </td>
                         <td className="p-2">
                           <input
                             type="text"
                             name="serial_number"
-                            value={student.serial_number}
-                            onChange={(event) =>
-                              handleInputChange(event, index)
+                            value={
+                              isEditing
+                                ? tempStudent?.serial_number || ""
+                                : student.serial_number || ""
                             }
-                            className="navbar p-2 rounded-lg border-none w-full"
-                            disabled={index !== editingIndex}
+                            onChange={handleInputChange}
+                            className="p-2 rounded-lg border-none w-full"
+                            disabled={!isEditing}
                           />
                         </td>
                         <td className="p-2">
                           <input
                             type="text"
                             name="pc_brand"
-                            value={student.pc_brand}
-                            onChange={(event) =>
-                              handleInputChange(event, index)
+                            value={
+                              isEditing
+                                ? tempStudent?.pc_brand || ""
+                                : student.pc_brand || ""
                             }
-                            className="navbar p-2 rounded-lg border-none w-full"
-                            disabled={index !== editingIndex}
+                            onChange={handleInputChange}
+                            className="p-2 rounded-lg border-none w-full"
+                            disabled={!isEditing}
                           />
                         </td>
                         <td className="p-2">
                           <input
                             type="text"
                             name="pc_color"
-                            value={student.pc_color}
-                            onChange={(event) =>
-                              handleInputChange(event, index)
+                            value={
+                              isEditing
+                                ? tempStudent?.pc_color || ""
+                                : student.pc_color || ""
                             }
-                            className="navbar p-2 rounded-lg border-none w-full"
-                            disabled={index !== editingIndex}
+                            onChange={handleInputChange}
+                            className="p-2 rounded-lg border-none w-full"
+                            disabled={!isEditing}
                           />
                         </td>
                         <td className="p-2">
                           <input
                             type="text"
                             name="phoneNumber"
-                            value={student.phoneNumber}
-                            onChange={(event) =>
-                              handleInputChange(event, index)
+                            value={
+                              isEditing
+                                ? tempStudent?.phoneNumber || ""
+                                : student.phoneNumber || ""
                             }
-                            className="navbar p-2 rounded-lg border-none w-full"
-                            disabled={index !== editingIndex}
+                            onChange={handleInputChange}
+                            className="p-2 rounded-lg border-none w-full"
+                            disabled={!isEditing}
                           />
                         </td>
                         <td className="p-2">
                           <input
                             type="email"
                             name="email"
-                            value={student.email}
-                            onChange={(event) =>
-                              handleInputChange(event, index)
+                            value={
+                              isEditing
+                                ? tempStudent?.email || ""
+                                : student.email || ""
                             }
-                            className="navbar p-2 rounded-lg border-none w-full"
-                            disabled={index !== editingIndex}
+                            onChange={handleInputChange}
+                            className="p-2 rounded-lg border-none w-full"
+                            disabled={!isEditing}
                           />
                         </td>
                         <td className="p-2">
                           <select
                             name="status"
-                            value={student.status}
-                            onChange={(event) =>
-                              handleInputChange(event, index)
+                            value={
+                              isEditing
+                                ? tempStudent?.status || "in"
+                                : student.status || "in"
                             }
-                            className="navbar p-2 rounded-lg border-none w-full"
-                            disabled={index !== editingIndex}
+                            onChange={handleInputChange}
+                            className="p-2 rounded-lg border-none w-full"
+                            disabled={!isEditing}
                           >
                             <option value="in">In</option>
                             <option value="out">Out</option>
                           </select>
                         </td>
                         <td className="p-2 flex justify-start space-x-2">
-                          {index === editingIndex ? (
-                            <button
-                              onClick={() => handleSave(index)}
-                              className="text-green-300"
-                            >
-                              Save
-                            </button>
+                          {isEditing ? (
+                            <>
+                              <button
+                                onClick={handleSave}
+                                className="text-green-300"
+                              >
+                                Save
+                              </button>
+                              <button
+                                onClick={handleCancel}
+                                className="text-gray-300"
+                              >
+                                Cancel
+                              </button>
+                            </>
                           ) : (
                             <FaEdit
                               className="text-yellow-300 cursor-pointer hover:text-yellow-400"
                               onClick={() => handleEdit(index)}
                             />
                           )}
-                          <FaTrash
-                            className="text-red-300 cursor-pointer hover:text-red-400"
-                            onClick={() => handleDelete(index)}
-                          />
-                          <td className="p-2 flex justify-start space-x-2">
+                          {!isNewRow && (
+                            <FaTrash
+                              className="text-red-300 cursor-pointer hover:text-red-400"
+                              onClick={() => handleDelete(index)}
+                            />
+                          )}
+                          {!isNewRow && (
                             <Link to={`/qrpage/${student.serial_number}`}>
                               <FaQrcode title="Generate QR Code" />
                             </Link>
-                          </td>
+                          )}
                         </td>
                       </tr>
-                    ))
+                    );
+                  })
                 )}
               </tbody>
             </table>

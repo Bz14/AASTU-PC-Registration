@@ -6,9 +6,9 @@ const login = async (req, res) => {
   try {
     const admin = await adminUsecase.login(req.body);
     const token = jwt.sign(
-      { id: admin.admin_id, role: admin.role },
+      { id: admin._id, role: admin.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "15d" }
     );
     res
       .status(200)

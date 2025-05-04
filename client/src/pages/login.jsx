@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
@@ -22,15 +22,15 @@ const Login = () => {
         "http://127.0.0.1:8000/api/admin/login",
         { username, password }
       );
-      alert("Login successful!"); // You can adjust this alert as needed
-      localStorage.setItem("username", response.data.admin.username); // Store username in local storage
-      navigate("/"); // Navigate after successful login
+      alert("Login successful!");
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("username", response.data.admin.username);
+      navigate("/");
     } catch (err) {
-      // Check if the error response has a message
       if (err.response && err.response.data) {
         setError(err.response.data.message || "Login failed");
       } else {
-        setError("Login failed"); // Fallback error message
+        setError("Login failed");
       }
     }
   };

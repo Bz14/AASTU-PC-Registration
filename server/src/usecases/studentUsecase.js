@@ -27,8 +27,7 @@ class StudentUsecase {
       owner_id: student._id,
     });
 
-    // Send QR code email
-    // await sendQrCodeEmail(data.email, qrCodeBase64);
+    await sendQrCodeEmail(data.email, qrCodeBase64);
 
     return { student, pc };
   }
@@ -67,8 +66,8 @@ class StudentUsecase {
           email: student.email,
           status: student.status,
           serial_number: student.serial_number,
-          pc_brand: pc?.pc_brand,
-          pc_color: pc?.pc_color,
+          pc_brand: pc.pc_brand,
+          pc_color: pc.pc_color,
           pc: pc
             ? {
                 serial_number: pc.serial_number,
