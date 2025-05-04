@@ -40,6 +40,14 @@ class PCRepository {
       },
     ]);
   }
+
+  async updateByOwnerId(owner_id, data) {
+    return PC.findOneAndUpdate({ owner_id }, data, { new: true });
+  }
+
+  async deleteByOwnerId(owner_id) {
+    return PC.findOneAndDelete({ owner_id });
+  }
 }
 
 module.exports = new PCRepository();

@@ -26,7 +26,6 @@ const showAll = async (req, res) => {
     const students = await studentUsecase.getAll(searchQuery);
     res.status(200).json(students);
   } catch (error) {
-    console.error("Error in showAll:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -50,6 +49,7 @@ const update = async (req, res) => {
       .status(200)
       .json({ message: "Student updated successfully", student, pc });
   } catch (error) {
+    console.error("Error in update:", error);
     res
       .status(error.message.includes("not found") ? 404 : 400)
       .json({ error: error.message });

@@ -1,8 +1,14 @@
 const Admin = require("../models/Admin");
 
 class AdminRepository {
-  async findAll() {
-    return Admin.find().select("-password");
+  async findAll(searchQuery) {
+    return Admin.find({
+      $or: [
+        { username: { $regex: searchQuery, $options: "i" } },
+        { email: { $regex: searchQuery, $options: "i" } },
+        { phoneNumber: { $regex: searchQuery, $options: "i" } },
+      ],
+    }).select("-password");
   }
 
   async findById(admin_id) {

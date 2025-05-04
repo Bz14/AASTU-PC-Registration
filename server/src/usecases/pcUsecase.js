@@ -4,9 +4,6 @@ const Student = require("../models/Student");
 class PCUsecase {
   async getPCs() {
     const pcs = await pcRepository.findAll();
-    if (pcs.length === 0) {
-      console.log("No PCs found.");
-    }
     return pcs;
   }
 

@@ -1,4 +1,3 @@
-// File: usecases/studentUsecase.js
 const studentRepository = require("../repositories/studentRepositories");
 const pcRepository = require("../repositories/pcRepositories");
 const { generateQrCode } = require("../utils/generateQrCode");
@@ -60,6 +59,7 @@ class StudentUsecase {
       students.map(async (student) => {
         const pc = await pcRepository.findByOwnerId(student._id);
         return {
+          id: student._id,
           student_id: student.student_id,
           student_name: student.student_name,
           phoneNumber: student.phoneNumber,
@@ -88,17 +88,18 @@ class StudentUsecase {
     return { student, pc };
   }
 
-  async update(student_id, data) {
-    const student = await studentRepository.findById(student_id);
+  async update(id, data) {
+    const student = await studentRepository.findById(id);
     if (!student) throw new Error("Student not found");
 
     const updateData = {
       student_name: data.student_name,
       phoneNumber: data.phoneNumber,
       email: data.email,
+      status: data.status,
     };
 
-    await studentRepository.update(student_id, updateData);
+    await studentRepository.update(id, updateData);
 
     if (data.serial_number || data.pc_brand || data.pc_color) {
       const pcUpdateData = {
@@ -109,7 +110,7 @@ class StudentUsecase {
       await pcRepository.updateByOwnerId(student._id, pcUpdateData);
     }
 
-    const updatedStudent = await studentRepository.findById(student_id);
+    const updatedStudent = await studentRepository.findById(id);
     const pc = await pcRepository.findByOwnerId(student._id);
     return { student: updatedStudent, pc };
   }
@@ -119,7 +120,14 @@ class StudentUsecase {
     if (!student) throw new Error("Student not found");
 
     await pcRepository.deleteByOwnerId(student._id);
-    await studentRepository.delete(student_id);
+    await studentRepository.delete(student._id);
+  }
+
+  async getBySerialNumber(serial_number) {
+    const student = await studentRepository.findBySerialNumber(serial_number);
+    if (!student) throw new Error("Student not found");
+    const pc = await pcRepository.findByOwnerId(student._id);
+    return { student, pc };
   }
 }
 

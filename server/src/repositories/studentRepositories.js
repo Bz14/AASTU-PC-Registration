@@ -17,8 +17,8 @@ class StudentRepository {
     });
   }
 
-  async findById(student_id) {
-    return Student.findOne({ student_id });
+  async findById(id) {
+    return Student.findOne({ _id: id });
   }
 
   async search(searchTerm) {
@@ -32,12 +32,17 @@ class StudentRepository {
     });
   }
 
-  async update(student_id, data) {
-    return Student.findOneAndUpdate({ student_id }, data, { new: true });
+  async update(id, data) {
+    console.log("Updating student with ID:", id, "with data:", data);
+    return Student.findOneAndUpdate({ _id: id }, data, { new: true });
   }
 
-  async delete(student_id) {
-    return Student.findOneAndDelete({ student_id });
+  async delete(id) {
+    return Student.findOneAndDelete({ _id: id });
+  }
+
+  async getBySerialNumber(serial_number) {
+    return Student.findOne({ serial_number: serial_number });
   }
 }
 

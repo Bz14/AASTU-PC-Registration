@@ -13,8 +13,8 @@ class AdminUseCase {
     return admin;
   }
 
-  async getAdmins() {
-    return adminRepository.findAll();
+  async getAdmins(searchQuery) {
+    return adminRepository.findAll(searchQuery);
   }
 
   async getAdminById(admin_id) {

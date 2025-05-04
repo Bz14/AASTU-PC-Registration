@@ -21,8 +21,9 @@ const login = async (req, res) => {
 };
 
 const getAdmins = async (req, res) => {
+  const searchQuery = req.query.search || "";
   try {
-    const admins = await adminUsecase.getAdmins();
+    const admins = await adminUsecase.getAdmins(searchQuery);
     res.status(200).json(admins);
   } catch (error) {
     res.status(500).json({ error: error.message });
