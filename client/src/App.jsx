@@ -5,7 +5,7 @@ import { MobileMenuProvider } from "./Components/contexts/MobileMenuContext"; //
 import MainLayout from "./Components/Layout/MainLayout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./Pages/Dashboard";
 import Settings from "./Pages/Settings";
 import Students from "./Pages/Students";
 import Admins from "./Pages/Admins";
