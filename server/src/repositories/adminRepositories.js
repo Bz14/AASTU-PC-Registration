@@ -1,4 +1,4 @@
-const Admin = require("../models/Admin");
+const Admin = require("../models/admin");
 
 class AdminRepository {
   async findAll(searchQuery) {

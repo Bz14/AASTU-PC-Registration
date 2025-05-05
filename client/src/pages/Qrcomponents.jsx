@@ -7,9 +7,11 @@ const Qrcomponents = ({ studentId }) => {
 
   useEffect(() => {
     console.log("Fetching QR code for Student ID:", studentId);
-    
+
     axios
-      .get(`http://127.0.0.1:8000/api/students/${studentId}/qrcode`, { responseType: 'blob' })
+      .get(`http://150.40.238.179:8000/api/students/${studentId}/qrcode`, {
+        responseType: "blob",
+      })
       .then((response) => {
         const qrCodeUrl = URL.createObjectURL(response.data);
         console.log("QR Code URL:", qrCodeUrl);
@@ -33,7 +35,11 @@ const Qrcomponents = ({ studentId }) => {
 
   return (
     <div className="qr-code-container">
-      <img src={qrCodeImage} alt="Student QR Code" style={{ width: 200, height: 200 }} />
+      <img
+        src={qrCodeImage}
+        alt="Student QR Code"
+        style={{ width: 200, height: 200 }}
+      />
       <button onClick={downloadQrCode} className="btn-download">
         Download QR Code
       </button>

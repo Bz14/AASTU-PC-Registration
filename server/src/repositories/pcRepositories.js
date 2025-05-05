@@ -1,5 +1,5 @@
 // File: repositories/pcRepository.js
-const PC = require("../models/PC");
+const PC = require("../models/pc");
 
 class PCRepository {
   async findAll() {

@@ -8,7 +8,7 @@ const fetchAdmins = async () => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("No authentication token found");
 
-  const response = await axios.get("http://127.0.0.1:8000/api/admins", {
+  const response = await axios.get("http://150.40.238.179:8000/api/admins", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -20,7 +20,7 @@ const fetchPCs = async () => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("No authentication token found");
 
-  const response = await axios.get("http://127.0.0.1:8000/api/pcs", {
+  const response = await axios.get("http://150.40.238.179:8000/api/pcs", {
     headers: {
       Authorization: `Bearer ${token}`,
     },

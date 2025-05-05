@@ -14,7 +14,7 @@ const fetchStudents = async (searchTerm = "") => {
   const token = localStorage.getItem("token");
 
   const response = await axios.get(
-    `http://127.0.0.1:8000/api/students?search=${searchTerm}`,
+    `http://150.40.238.179:8000/api/students?search=${searchTerm}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -46,7 +46,7 @@ const Students = () => {
     mutationFn: (newStudent) => {
       const token = localStorage.getItem("token");
       return axios.post(
-        "http://127.0.0.1:8000/api/students/register",
+        "http://150.40.238.179:8000/api/students/register",
         newStudent,
         {
           headers: {
@@ -70,7 +70,7 @@ const Students = () => {
   const deleteStudentMutation = useMutation({
     mutationFn: (id) => {
       const token = localStorage.getItem("token");
-      return axios.delete(`http://127.0.0.1:8000/api/students/${id}`, {
+      return axios.delete(`http://150.40.238.179:8000/api/students/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -85,7 +85,7 @@ const Students = () => {
     mutationFn: ({ id, updatedStudent }) => {
       const token = localStorage.getItem("token");
       return axios.put(
-        `http://127.0.0.1:8000/api/students/${id}`,
+        `http://150.40.238.179:8000/api/students/${id}`,
         updatedStudent,
         {
           headers: {

@@ -7,7 +7,7 @@ import { QrReader } from "react-qr-reader";
 const fetchQRCode = async (serial_number) => {
   const token = localStorage.getItem("token");
   const response = await axios.get(
-    `http://127.0.0.1:8000/api/qrcode/generate/${serial_number}`,
+    `http://150.40.238.179:8000/api/qrcode/generate/${serial_number}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -41,7 +41,7 @@ const QrCodePage = () => {
       console.log("Scanned QR code data:", data);
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/api/students/serial/${data}`,
+          `http://150.40.238.179:8000/api/students/serial/${data}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -72,7 +72,7 @@ const QrCodePage = () => {
   };
 
   const downloadQRCode = async () => {
-    const fullUrl = `http://127.0.0.1:8000/api/qrcode/image/${serial_number}`;
+    const fullUrl = `http://150.40.238.179:8000/api/qrcode/image/${serial_number}`;
 
     try {
       const response = await axios.get(
@@ -109,7 +109,7 @@ const QrCodePage = () => {
 
       try {
         const response = await axios.post(
-          "http://127.0.0.1:8000/api/qrcode/scan",
+          "http://150.40.238.179:8000/api/qrcode/scan",
           formData,
           {
             headers: {
@@ -155,7 +155,7 @@ const QrCodePage = () => {
       {/* {error && <p className="text-red-500">{error}</p>} */}
       <>
         <img
-          src={data ? `http://127.0.0.1:8000${data.qrCodeUrl}` : ""}
+          src={data ? `http://150.40.238.179:8000${data.qrCodeUrl}` : ""}
           alt="QR Code"
           className="mb-4 w-64 h-64"
           onError={() => setError(`Failed to load QR code image.`)}

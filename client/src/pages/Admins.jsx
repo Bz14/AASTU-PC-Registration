@@ -8,7 +8,7 @@ const fetchAdmins = async (searchTerm = "") => {
   if (!token) throw new Error("No authentication token found");
 
   const response = await axios.get(
-    `http://127.0.0.1:8000/api/admins?search=${searchTerm}`,
+    `http://150.40.238.179:8000/api/admins?search=${searchTerm}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -39,12 +39,16 @@ const Admins = () => {
   const addAdminMutation = useMutation({
     mutationFn: (newAdmin) => {
       const token = localStorage.getItem("token");
-      return axios.post("http://127.0.0.1:8000/api/admins/register", newAdmin, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      return axios.post(
+        "http://150.40.238.179:8000/api/admins/register",
+        newAdmin,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["admins"]);
@@ -61,12 +65,16 @@ const Admins = () => {
   const updateAdminMutation = useMutation({
     mutationFn: ({ id, updatedAdmin }) => {
       const token = localStorage.getItem("token");
-      return axios.put(`http://127.0.0.1:8000/api/admins/${id}`, updatedAdmin, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      return axios.put(
+        `http://150.40.238.179:8000/api/admins/${id}`,
+        updatedAdmin,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["admins"]);
@@ -82,7 +90,7 @@ const Admins = () => {
   const deleteAdminMutation = useMutation({
     mutationFn: (id) => {
       const token = localStorage.getItem("token");
-      return axios.delete(`http://127.0.0.1:8000/api/admins/${id}`, {
+      return axios.delete(`http://150.40.238.179:8000/api/admins/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -116,11 +124,6 @@ const Admins = () => {
     const { name, value } = event.target;
     setTempAdmin((prev) => ({ ...prev, [name]: value }));
     setValidationError("");
-  };
-
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    setTempAdmin((prev) => ({ ...prev, profile_picture: file }));
   };
 
   const validateAdmin = (admin) => {
