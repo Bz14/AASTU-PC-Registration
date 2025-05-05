@@ -7,8 +7,7 @@
     "dev": "vite",
     "build": "vite build ",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "preinstall": "npm install --legacy-peer-deps"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -19,6 +18,7 @@
     "d3-color": "^3.1.0",
     "d3-interpolate": "^3.0.1",
     "d3-scale": "^4.0.2",
+    "html5-qrcode": "^2.3.8",
     "qr-scanner": "^1.4.2",
     "qrcode": "^1.5.4",
     "qrcode.react": "^4.2.0",
@@ -27,8 +27,6 @@
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.54.1",
     "react-icons": "^5.3.0",
-    "react-qr-code": "^2.0.15",
-    "react-qr-reader": "^3.0.0-beta-1",
     "react-router-dom": "^6.27.0",
     "react-scanner": "^1.2.0",
     "recharts": "^2.15.3",
