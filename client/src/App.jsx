@@ -5,11 +5,11 @@ import { MobileMenuProvider } from "./Components/contexts/MobileMenuContext"; //
 import MainLayout from "./Components/Layout/MainLayout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import Dashboard from "./Pages/Dashboard";
-import Settings from "./Pages/Settings";
-import Students from "./Pages/Students";
-import Admins from "./Pages/Admins";
-import Login from "./Pages/Login";
+import Dashboard from "./pages/Dashboard";
+import Settings from "./pages/Settings";
+import Students from "./pages/Students";
+import Admins from "./pages/Admins";
+import Login from "./pages/Login";
 import PrivateRoute from "./Components/PrivateRoute";
 import NotFound from "./pages/NotFound";
 import Qrpage from "./pages/QrPage";
