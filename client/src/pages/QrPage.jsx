@@ -22,7 +22,7 @@ const QrCodePage = () => {
   const [studentData, setStudentData] = useState(null);
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState(null);
-  const qrRef = useRef(null);
+  // const qrRef = useRef(null);
   const qrCodeInstance = useRef(null);
 
   const { data, isLoading } = useQuery({
