@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build ",
     "lint": "eslint .",
     "preview": "vite preview",
-    "preinstall": "npm install --legacy-peer-deps"
+    "preinstall": "npm install --force"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
