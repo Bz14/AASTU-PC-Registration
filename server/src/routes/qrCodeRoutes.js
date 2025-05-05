@@ -4,6 +4,7 @@ const qrCodeController = require("../controllers/qrCodeController");
 const authMiddleware = require("../middlewares/authMiddlewares");
 const validate = require("../middlewares/validate");
 const { check } = require("express-validator");
+const upload = require("../utils/fileUpload");
 
 router.get(
   "/qrcode/generate/:serial_number",
@@ -17,13 +18,14 @@ router.get(
 );
 router.post(
   "/qrcode/scan",
+  upload.single("file"),
   authMiddleware,
-  [
-    check("admin_id").notEmpty().withMessage("Admin ID is required"),
-    check("student_id").notEmpty().withMessage("Student ID is required"),
-    check("pc_id").notEmpty().withMessage("PC ID is required"),
-  ],
-  validate,
+  // [
+  //   check("admin_id").notEmpty().withMessage("Admin ID is required"),
+  //   check("student_id").notEmpty().withMessage("Student ID is required"),
+  //   check("pc_id").notEmpty().withMessage("PC ID is required"),
+  // ],
+  // validate,
   qrCodeController.scanQrCode
 );
 router.post(

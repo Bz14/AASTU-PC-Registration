@@ -12,7 +12,6 @@ import { Link } from "react-router-dom";
 
 const fetchStudents = async (searchTerm = "") => {
   const token = localStorage.getItem("token");
-  console.log("Token:", token);
 
   const response = await axios.get(
     `http://127.0.0.1:8000/api/students?search=${searchTerm}`,
@@ -22,7 +21,6 @@ const fetchStudents = async (searchTerm = "") => {
       },
     }
   );
-  console.log("Fetched students:", response.data);
   return response.data;
 };
 
@@ -123,7 +121,7 @@ const Students = () => {
       status: "in",
     });
     setCreatingNew(true);
-    setEditingIndex(students.length); // Set editing index to new row
+    setEditingIndex(students.length);
     setValidationError("");
   };
 
@@ -158,7 +156,10 @@ const Students = () => {
     if (creatingNew) {
       addStudentMutation.mutate(formData);
     } else {
-      updateStudentMutation.mutate({ id: editId, updatedStudent: formData });
+      updateStudentMutation.mutate({
+        id: tempStudent.id,
+        updatedStudent: formData,
+      });
     }
   };
 
@@ -171,7 +172,7 @@ const Students = () => {
   };
 
   const handleDelete = (index) => {
-    const studentId = students[index].student_id;
+    const studentId = students[index].id;
     if (window.confirm("Are you sure you want to delete this student?")) {
       deleteStudentMutation.mutate(studentId);
     }

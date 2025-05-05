@@ -44,6 +44,10 @@ class StudentRepository {
   async getBySerialNumber(serial_number) {
     return Student.findOne({ serial_number: serial_number });
   }
+
+  async findBySerialNumber(serial_number) {
+    return Student.findOne({ serial_number: serial_number });
+  }
 }
 
 module.exports = new StudentRepository();

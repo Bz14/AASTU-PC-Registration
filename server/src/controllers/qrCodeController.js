@@ -24,11 +24,13 @@ const getQRCode = async (req, res) => {
 };
 
 const scanQrCode = async (req, res) => {
+  console.log("Received file:", req.file, "eree"); // Log the received file
   try {
     if (!req.file) {
       return res.status(400).json({ error: "Invalid file upload" });
     }
     const student = await qrCodeUsecase.scanQrCode(req.file.path);
+    console.log("Scanned Student Data:", student);
     res.status(200).json(student);
   } catch (error) {
     console.error("QR Code Scanning Error:", error.message);

@@ -12,7 +12,6 @@ import Admins from "./pages/Admins";
 import Login from "./Pages/Login";
 import PrivateRoute from "./Components/PrivateRoute";
 import NotFound from "./pages/NotFound";
-import Qrcomponents from "./pages/Qrcomponents";
 import Qrpage from "./pages/QrPage";
 function App() {
   const queryClient = new QueryClient();
@@ -23,13 +22,9 @@ function App() {
         <SidebarProvider>
           <MobileMenuProvider>
             {" "}
-            {/* Wrap in MobileMenuProvider */}
             <Router>
               <Routes>
-                {/* Login and Signup routes */}
                 <Route path="/login" element={<Login />} />
-
-                {/* All other routes use the MainLayout */}
                 <Route
                   path="/"
                   element={
@@ -44,8 +39,6 @@ function App() {
 
                   <Route path="admins" element={<Admins />} />
                   <Route path="settings" element={<Settings />} />
-                  {/* <Route path="Qrcomponents" element={<Qrcomponents />} /> */}
-                  {/* <Route path="/qrcode/:studentId" element={<Qrcomponents />} /> */}
                   <Route path="*" element={<NotFound />} />
                 </Route>
               </Routes>
