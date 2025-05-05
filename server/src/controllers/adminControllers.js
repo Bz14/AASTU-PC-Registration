@@ -96,6 +96,14 @@ const search = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+const createSuperAdmin = async (req, res) => {
+  try {
+    const superAdmin = await adminUsecase.createSuperAdmin(req.body);
+    res.status(201).json(superAdmin);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 module.exports = {
   login,
@@ -106,4 +114,5 @@ module.exports = {
   deleteAdmin,
   getChartData,
   search,
+  createSuperAdmin,
 };

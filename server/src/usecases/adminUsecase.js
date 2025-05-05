@@ -25,7 +25,7 @@ class AdminUseCase {
 
   async createAdmin(data) {
     data.password = await bcrypt.hash(data.password, 10);
-    data.role = data.role || "admin";
+    data.role = data.role || "super_admin";
     return adminRepository.create(data);
   }
 
@@ -80,6 +80,15 @@ class AdminUseCase {
     const admins = await adminRepository.search(query);
     if (!admins) throw new Error("No admins found");
     return admins;
+  }
+
+  async createSuperAdmin(data) {
+    const existingAdmin = await adminRepository.findByUsername(data.username);
+    if (existingAdmin) throw new Error("Admin already exists");
+
+    data.password = await bcrypt.hash(data.password, 10);
+    data.role = "super_admin";
+    return adminRepository.create(data);
   }
 }
 

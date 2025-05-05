@@ -19,7 +19,6 @@ class PCUsecase {
       if (!student) throw new Error("Student not found");
     }
     const pc = await pcRepository.create(data);
-    console.log("PC created: ", pc);
     return pc;
   }
 
@@ -30,14 +29,12 @@ class PCUsecase {
     }
     const pc = await pcRepository.update(pc_id, data);
     if (!pc) throw new Error("PC not found");
-    console.log("PC updated: ", pc);
     return pc;
   }
 
   async deletePC(pc_id) {
     const pc = await pcRepository.delete(pc_id);
     if (!pc) throw new Error("PC not found");
-    console.log("PC deleted: ", { pc_id });
     return pc;
   }
 

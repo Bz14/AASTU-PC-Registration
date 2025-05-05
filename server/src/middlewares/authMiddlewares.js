@@ -32,30 +32,3 @@ const adminAuthMiddleware = async (req, res, next) => {
 };
 
 module.exports = adminAuthMiddleware;
-
-// // File: middlewares/adminAuthMiddleware.js
-// const jwt = require('jsonwebtoken');
-// const Admin = require('../models/Admin');
-
-// const adminAuthMiddleware = (allowedRoles = ['super_admin', 'admin']) => async (req, res, next) => {
-//   try {
-//     const token = req.header('Authorization')?.replace('Bearer ', '');
-//     if (!token) {
-//       return res.status(401).json({ error: 'No token provided' });
-//     }
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//     if (!decoded.id || !allowedRoles.includes(decoded.role)) {
-//       return res.status(403).json({ error: `Access denied: ${allowedRoles.join(' or ')} role required` });
-//     }
-//     const admin = await Admin.findOne({ admin_id: decoded.id }).select('-password');
-//     if (!admin) {
-//       return res.status(401).json({ error: 'Admin not found' });
-//     }
-//     req.user = { id: admin.admin_id, role: admin.role, username: admin.username };
-//     next();
-//   } catch (error) {
-//     res.status(401).json({ error: 'Invalid token' });
-//   }
-// };
-
-// module.exports = adminAuthMiddleware;

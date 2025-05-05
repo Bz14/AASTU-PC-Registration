@@ -46,12 +46,14 @@ router.get("/admins/search", authMiddleware, adminController.search);
 router.get("/admins/:id", authMiddleware, adminController.getAdminById);
 router.post(
   "/admins/register",
-  // authMiddleware,
+  authMiddleware,
   upload.single("profile_picture"),
   adminValidation,
   validate,
   adminController.createAdmin
 );
+
+router.post("/superadmin/register", adminController.createSuperAdmin);
 router.put(
   "/admins/:id",
   authMiddleware,

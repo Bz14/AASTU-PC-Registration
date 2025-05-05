@@ -33,7 +33,6 @@ class StudentRepository {
   }
 
   async update(id, data) {
-    console.log("Updating student with ID:", id, "with data:", data);
     return Student.findOneAndUpdate({ _id: id }, data, { new: true });
   }
 

@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
-import { FaUserPlus, FaSearch, FaEdit, FaTrash, FaSave } from "react-icons/fa";
+import { useState } from "react";
+import { FaUserPlus, FaSearch, FaEdit, FaTrash } from "react-icons/fa";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
 const fetchAdmins = async (searchTerm = "") => {
   const token = localStorage.getItem("token");
+  if (!token) throw new Error("No authentication token found");
 
   const response = await axios.get(
     `http://127.0.0.1:8000/api/admins?search=${searchTerm}`,
@@ -23,7 +24,8 @@ const Admins = () => {
   const [editingIndex, setEditingIndex] = useState(null);
   const [creatingNew, setCreatingNew] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [tempAdmin, setTempAdmins] = useState(null);
+  const [tempAdmin, setTempAdmin] = useState(null);
+  const [validationError, setValidationError] = useState("");
 
   const {
     data: admins = [],
@@ -33,6 +35,7 @@ const Admins = () => {
     queryKey: ["admins", searchTerm],
     queryFn: () => fetchAdmins(searchTerm),
   });
+
   const addAdminMutation = useMutation({
     mutationFn: (newAdmin) => {
       const token = localStorage.getItem("token");
@@ -47,23 +50,32 @@ const Admins = () => {
       queryClient.invalidateQueries(["admins"]);
       setCreatingNew(false);
       setEditingIndex(null);
-      setTempAdmins(null);
+      setTempAdmin(null);
+      setValidationError("");
+    },
+    onError: () => {
+      setValidationError("Failed to add admin. Please try again.");
     },
   });
 
-  const updateStudentMutation = useMutation({
+  const updateAdminMutation = useMutation({
     mutationFn: ({ id, updatedAdmin }) => {
       const token = localStorage.getItem("token");
       return axios.put(`http://127.0.0.1:8000/api/admins/${id}`, updatedAdmin, {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         },
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["admins"]);
       setEditingIndex(null);
-      setTempAdmins(null);
+      setTempAdmin(null);
+      setValidationError("");
+    },
+    onError: () => {
+      setValidationError("Failed to update admin. Please try again.");
     },
   });
 
@@ -83,76 +95,70 @@ const Admins = () => {
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
+    setValidationError("");
   };
 
   const handleAddRow = () => {
-    setTempAdmins([
-      ...admins,
-      {
-        username: "",
-        admin_id: "",
-        phoneNumber: "",
-        email: "",
-        password: "",
-        profile_picture: "",
-      },
-    ]);
-
+    setTempAdmin({
+      username: "",
+      admin_id: "",
+      phoneNumber: "",
+      email: "",
+      password: "",
+      profile_picture: "",
+    });
     setCreatingNew(true);
     setEditingIndex(admins.length);
+    setValidationError("");
   };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-
-    setTempAdmins((prev) => ({ ...prev, [name]: value }));
+    setTempAdmin((prev) => ({ ...prev, [name]: value }));
+    setValidationError("");
   };
 
-  const handleFileChange = (event, index) => {
+  const handleFileChange = (event) => {
     const file = event.target.files[0];
-    const updatedAdmins = [...admins];
-    updatedAdmins[index] = { ...updatedAdmins[index], profile_picture: file };
-    setTempAdmins(updatedAdmins[index]);
+    setTempAdmin((prev) => ({ ...prev, profile_picture: file }));
   };
 
-  const handleSave = (index) => {
-    const admin = admins[index];
+  const validateAdmin = (admin) => {
+    const requiredFields = [
+      "username",
+      "admin_id",
+      "phoneNumber",
+      "email",
+      "password",
+    ];
+    return requiredFields.every((field) => admin[field]?.trim() !== "");
+  };
+
+  const handleSave = () => {
+    console.log(tempAdmin);
+    if (!tempAdmin) return;
+
+    if (!validateAdmin(tempAdmin)) {
+      setValidationError("Please fill out all required fields.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("username", tempAdmin.username);
+    formData.append("admin_id", tempAdmin.admin_id);
+    formData.append("phoneNumber", tempAdmin.phoneNumber);
+    formData.append("email", tempAdmin.email);
+    formData.append("password", tempAdmin.password);
+    if (tempAdmin.profile_picture) {
+      formData.append("profile_picture", tempAdmin.profile_picture);
+    }
 
     if (creatingNew) {
-      if (
-        !admin.username ||
-        !admin.admin_id ||
-        !admin.phoneNumber ||
-        !admin.email ||
-        !admin.password
-      ) {
-        alert("Please fill in all fields before saving.");
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("username", admin.username);
-      formData.append("admin_id", admin.admin_id);
-      formData.append("phoneNumber", admin.phoneNumber);
-      formData.append("email", admin.email);
-      formData.append("password", admin.password);
-
-      if (admin.profile_picture) {
-        formData.append("profile_picture", admin.profile_picture);
-      }
-
       addAdminMutation.mutate(formData);
     } else {
-      updateStudentMutation.mutate({
+      updateAdminMutation.mutate({
         id: editId,
-        updatedAdmin: {
-          username: admin.username,
-          admin_id: admin.admin_id,
-          phoneNumber: admin.phoneNumber,
-          email: admin.email,
-          password: admin.password,
-          profile_picture: admin.profile_picture,
-        },
+        updatedAdmin: formData,
       });
     }
   };
@@ -160,167 +166,222 @@ const Admins = () => {
   const handleEdit = (index) => {
     setEditingIndex(index);
     setEditId(admins[index].admin_id);
+    setTempAdmin({ ...admins[index] });
     setCreatingNew(false);
+    setValidationError("");
   };
 
   const handleDelete = (index) => {
     const adminId = admins[index].admin_id;
-
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this admin?"
-    );
-    if (!confirmDelete) return;
-
-    deleteAdminMutation.mutate(adminId);
+    if (window.confirm("Are you sure you want to delete this admin?")) {
+      deleteAdminMutation.mutate(adminId);
+    }
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error loading admins</div>;
+  const handleCancel = () => {
+    setEditingIndex(null);
+    setCreatingNew(false);
+    setTempAdmin(null);
+    setValidationError("");
+  };
+
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Error loading admins.</p>;
 
   return (
-    <div className="navbar min-h-screen p-4">
+    <div className="min-h-screen p-4">
       <div className="flex items-center justify-end mb-8 space-x-2">
         <FaUserPlus
-          className=" text-2xl cursor-pointer hover:text-blue-400 transition duration-300"
+          className="text-2xl cursor-pointer hover:text-blue-400 transition duration-300"
           title="Add New Admin"
           aria-label="Add New Admin"
           onClick={handleAddRow}
         />
-        <div className="relative flex items-center navbar rounded-lg border border-blue-500">
+        <div className="relative flex items-center rounded-lg border border-blue-500">
           <input
             type="text"
             placeholder="Search..."
-            className="p-2 navbar rounded-lg placeholder-blue-300 w-64 h-10 flex-1 border-none outline-none focus:border-blue-500 focus:ring-0 transition duration-300"
+            className="p-2 rounded-lg placeholder-blue-300 w-64 h-10 flex-1 border-none outline-none focus:border-blue-500 focus:ring-0 transition duration-300"
             value={searchTerm}
             onChange={handleSearchChange}
           />
-          <FaSearch className=" ml-2 cursor-pointer h-10 mr-2" />
+          <FaSearch className="ml-2 cursor-pointer h-10 mr-2" />
         </div>
       </div>
-
-      <div className="navbar p-6 rounded-lg shadow-lg relative">
+      {validationError && (
+        <p className="text-red-500 text-center mb-4">{validationError}</p>
+      )}
+      <div className="p-6 rounded-lg shadow-lg">
         <div className="overflow-x-auto">
           <div className="shadow-2xl p-2 rounded-lg">
-            <table className="min-w-full text-left navbar border-collapse">
+            <table className="min-w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-blue-500">
-                  <th className="p-3 border-b border-blue-500">#</th>
-                  <th className="p-3 border-b border-blue-500">Name</th>
-                  <th className="p-3 border-b border-blue-500">ID Number</th>
-                  <th className="p-3 border-b border-blue-500">Phone Number</th>
-                  <th className="p-3 border-b border-blue-500">Email</th>
-                  <th className="p-3 border-b border-blue-500">
-                    Profile Picture
-                  </th>
-                  <th className="p-3 border-b border-blue-500">Action</th>
+                  <th className="p-3">#</th>
+                  <th className="p-3">Name</th>
+                  <th className="p-3">ID Number</th>
+                  <th className="p-3">Phone Number</th>
+                  <th className="p-3">Email</th>
+                  <th className="p-3">Password</th>
+                  <th className="p-3">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {admins.length === 0 ? (
+                {admins.length === 0 && !creatingNew ? (
                   <tr>
-                    <td colSpan="8" className="text-center">
+                    <td colSpan="7" className="text-center p-2">
                       No admins found.
                     </td>
                   </tr>
                 ) : (
-                  admins
+                  [...admins, ...(creatingNew && tempAdmin ? [tempAdmin] : [])]
                     .filter((admin) =>
                       admin.username
-                        .toLowerCase()
+                        ?.toLowerCase()
                         .includes(searchTerm.toLowerCase())
                     )
-                    .map((admin, index) => (
-                      <tr
-                        key={admin.id || index}
-                        className={`navbar ${
-                          index === editingIndex ? "bg-[#002B6C]" : ""
-                        }`}
-                      >
-                        <td className="p-2">{index + 1}</td>
-                        <td className="p-2  ">
-                          <input
-                            type="text"
-                            name="username"
-                            value={admin.username}
-                            onChange={(event) =>
-                              handleInputChange(event, index)
-                            }
-                            className="navbar p-2 rounded-lg border-none w-full"
-                            disabled={index !== editingIndex}
-                            style={{ border: "solid var(--button-color) 2px" }}
-                          />
-                        </td>
-                        <td className="p-2">
-                          <input
-                            type="text"
-                            name="admin_id"
-                            value={admin.admin_id}
-                            onChange={(event) =>
-                              handleInputChange(event, index)
-                            }
-                            className="navbar p-2 rounded-lg border-none w-full"
-                            disabled={index !== editingIndex}
-                            style={{ border: "solid var(--button-color) 2px" }}
-                          />
-                        </td>
-                        <td className="p-2">
-                          <input
-                            type="text"
-                            name="phoneNumber"
-                            value={admin.phoneNumber}
-                            onChange={(event) =>
-                              handleInputChange(event, index)
-                            }
-                            className="navbar p-2 rounded-lg border-none w-full"
-                            disabled={index !== editingIndex}
-                            style={{ border: "solid var(--button-color) 2px" }}
-                          />
-                        </td>
-                        <td className="p-2">
-                          <input
-                            type="email"
-                            name="email"
-                            value={admin.email}
-                            onChange={(event) =>
-                              handleInputChange(event, index)
-                            }
-                            className="navbar p-2 rounded-lg border-none w-full"
-                            disabled={index !== editingIndex}
-                            style={{ border: "solid var(--button-color) 2px" }}
-                          />
-                        </td>
+                    .map((admin, index) => {
+                      const isNewRow = creatingNew && index === admins.length;
+                      const isEditing = index === editingIndex || isNewRow;
 
-                        <td className="p-2">
-                          <input
-                            type="file"
-                            name="profile_picture"
-                            onChange={(event) => handleFileChange(event, index)}
-                            className="navbar p-2 rounded-lg border-none w-full"
-                            disabled={index !== editingIndex}
-                            style={{ border: "solid var(--button-color) 2px" }}
-                          />
-                        </td>
-                        <td className="p-2">
-                          {index === editingIndex ? (
-                            <FaSave
-                              className="navbar text-xl cursor-pointer mr-2"
-                              title="Save"
-                              onClick={() => handleSave(index)}
+                      return (
+                        <tr
+                          key={admin.id || `new-${index}`}
+                          className={`border-b border-blue-500 ${
+                            isEditing ? "bg-white" : ""
+                          }`}
+                        >
+                          <td className="p-2">{index + 1}</td>
+                          <td className="p-2">
+                            <input
+                              type="text"
+                              name="username"
+                              value={
+                                isEditing
+                                  ? tempAdmin?.username || ""
+                                  : admin.username || ""
+                              }
+                              onChange={handleInputChange}
+                              className="p-2 rounded-lg border-none w-full"
+                              disabled={!isEditing}
                             />
-                          ) : (
-                            <FaEdit
-                              className="navbar text-xl cursor-pointer mr-2"
-                              title="Edit"
-                              onClick={() => handleEdit(index)}
+                          </td>
+                          <td className="p-2">
+                            <input
+                              type="text"
+                              name="admin_id"
+                              value={
+                                isEditing
+                                  ? tempAdmin?.admin_id || ""
+                                  : admin.admin_id || ""
+                              }
+                              onChange={handleInputChange}
+                              className="p-2 rounded-lg border-none w-full"
+                              disabled={!isEditing}
                             />
-                          )}
-                          <FaTrash
-                            className="text-red-600 cursor-pointer hover:text-red-400 transition duration-300"
-                            onClick={() => handleDelete(index)}
-                          />
-                        </td>
-                      </tr>
-                    ))
+                          </td>
+                          <td className="p-2">
+                            <input
+                              type="text"
+                              name="phoneNumber"
+                              value={
+                                isEditing
+                                  ? tempAdmin?.phoneNumber || ""
+                                  : admin.phoneNumber || ""
+                              }
+                              onChange={handleInputChange}
+                              className="p-2 rounded-lg border-none w-full"
+                              disabled={!isEditing}
+                            />
+                          </td>
+                          <td className="p-2">
+                            <input
+                              type="email"
+                              name="email"
+                              value={
+                                isEditing
+                                  ? tempAdmin?.email || ""
+                                  : admin.email || ""
+                              }
+                              onChange={handleInputChange}
+                              className="p-2 rounded-lg border-none w-full"
+                              disabled={!isEditing}
+                            />
+                          </td>
+                          <td className="p-2">
+                            <input
+                              type="password"
+                              name="password"
+                              value={
+                                isEditing
+                                  ? tempAdmin?.password || ""
+                                  : admin.password || ""
+                              }
+                              onChange={handleInputChange}
+                              className="p-2 rounded-lg border-none w-full"
+                              disabled={!isEditing}
+                            />
+                          </td>
+                          {/* <td className="p-2">
+                            {isEditing ? (
+                              <input
+                                type="file"
+                                name="profile_picture"
+                                onChange={handleFileChange}
+                                className="p-2 rounded-lg border-none w-full"
+                              />
+                            ) : (
+                              <span>
+                                {admin.profile_picture ? (
+                                  <img
+                                    src={
+                                      typeof admin.profile_picture === "string"
+                                        ? `http://127.0.0.1:8000/${admin.profile_picture}`
+                                        : URL.createObjectURL(
+                                            admin.profile_picture
+                                          )
+                                    }
+                                    alt="Profile"
+                                    className="w-10 h-10 object-cover"
+                                  />
+                                ) : (
+                                  "N/A"
+                                )}
+                              </span>
+                            )}
+                          </td> */}
+                          <td className="p-2 flex justify-start space-x-2">
+                            {isEditing ? (
+                              <>
+                                <button
+                                  onClick={handleSave}
+                                  className="text-green-300 hover:text-green-400"
+                                >
+                                  Save
+                                </button>
+                                <button
+                                  onClick={handleCancel}
+                                  className="text-gray-300 hover:text-gray-400"
+                                >
+                                  Cancel
+                                </button>
+                              </>
+                            ) : (
+                              <FaEdit
+                                className="text-yellow-300 cursor-pointer hover:text-yellow-400"
+                                onClick={() => handleEdit(index)}
+                              />
+                            )}
+                            {!isNewRow && (
+                              <FaTrash
+                                className="text-red-300 cursor-pointer hover:text-red-400"
+                                onClick={() => handleDelete(index)}
+                              />
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
                 )}
               </tbody>
             </table>
