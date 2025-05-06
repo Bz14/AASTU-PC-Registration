@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import axios from "axios";
 
 const Qrcomponents = ({ studentId }) => {
@@ -45,6 +46,9 @@ const Qrcomponents = ({ studentId }) => {
       </button>
     </div>
   );
+};
+Qrcomponents.propTypes = {
+  studentId: PropTypes.string.isRequired,
 };
 
 export default Qrcomponents;

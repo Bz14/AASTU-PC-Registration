@@ -1,23 +1,15 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import PropTypes from "prop-types";
 
 const AddNewAdminForm = ({ isOpen, onClose }) => {
+  const [adminName, setAdminName] = useState("");
+  const [adminEmail, setAdminEmail] = useState("");
+  const [adminID, setAdminID] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
   const schema = yup.object().shape({
-    // const [adminName, setAdminName] = useState('');
-    // const [adminEmail, setAdminEmail] = useState('');
-    // const [adminID, setAdminID] = useState('');
-    // const [adminPassword, setAdminPassword] = useState('');
-
-    // const handleSubmit = (e) => {
-    //   e.preventDefault();
-    //   const newAdmin = { adminName, adminEmail, adminID, adminPassword };
-
-    //   console.log('Submitting:', newAdmin);
-
-    //   onClose();
-    // };
     adminName: yup.string().required("Admin Name is required"),
     adminEmailEmail: yup
       .string()
@@ -30,11 +22,7 @@ const AddNewAdminForm = ({ isOpen, onClose }) => {
       .required("Password is required"),
   });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const { handleSubmit } = useForm({
     resolver: yupResolver(schema),
   });
 
@@ -119,6 +107,11 @@ const AddNewAdminForm = ({ isOpen, onClose }) => {
       </div>
     </div>
   );
+};
+
+AddNewAdminForm.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 export default AddNewAdminForm;

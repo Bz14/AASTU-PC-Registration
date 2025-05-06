@@ -1,4 +1,5 @@
-import React from 'react';
+import React from "react";
+import PropTypes from "prop-types";
 
 const Settings = ({ setIsStatusVisible }) => {
   const [isChecked, setIsChecked] = React.useState(true); // Default to true to show the status column
@@ -22,6 +23,9 @@ const Settings = ({ setIsStatusVisible }) => {
       </label>
     </div>
   );
+};
+Settings.propTypes = {
+  setIsStatusVisible: PropTypes.func.isRequired,
 };
 
 export default Settings;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMobileMenu } from "../contexts/MobileMenuContext";
 import computerIcon from "../../assets/laptop-minimalistic-svgrepo-com.svg";
 import ProfileIcon from "../../assets/profile-svgrepo-com.svg";
