@@ -9,8 +9,8 @@ import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import Students from "./pages/Students";
 import Admins from "./pages/Admins";
-import Login from "./pages/Login";
-import PrivateRoute from "./Components/PrivateRoute";
+import Login from "./pages/login";
+import PrivateRoute from "./Components/privateRoute";
 import NotFound from "./pages/NotFound";
 import Qrpage from "./pages/QrPage";
 function App() {

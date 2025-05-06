@@ -1,9 +1,12 @@
-import React, { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from "react";
+import PropTypes from "prop-types";
 
 const MobileMenuContext = createContext();
 
-export const useMobileMenu = () => {
-  return useContext(MobileMenuContext);
+export const useMobileMenu = () => {};
+
+MobileMenuProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export const MobileMenuProvider = ({ children }) => {
@@ -15,7 +18,9 @@ export const MobileMenuProvider = ({ children }) => {
   };
 
   return (
-    <MobileMenuContext.Provider value={{ isMobileMenuVisible, toggleMobileMenu }}>
+    <MobileMenuContext.Provider
+      value={{ isMobileMenuVisible, toggleMobileMenu }}
+    >
       {children}
     </MobileMenuContext.Provider>
   );

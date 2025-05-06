@@ -1,19 +1,22 @@
-import React, { createContext, useContext, useState } from 'react';
+import { createContext, useState } from "react";
+import PropTypes from "prop-types";
 
 const LoginContext = createContext();
 
-export const useLogin = () => {
-  return useContext(LoginContext);
+export const useLogin = () => {};
+
+LoginProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export const LoginProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
 
-  const login = (credentials) => {
+  const login = () => {
     // Simulate login logic
     setIsAuthenticated(true);
-    setUser({ name: 'Super Admin' }); // Replace with actual user data
+    setUser({ name: "Super Admin" }); // Replace with actual user data
   };
 
   const logout = () => {

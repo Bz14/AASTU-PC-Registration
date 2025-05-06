@@ -1,25 +1,27 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useState, useEffect, useContext } from "react";
+import PropTypes from "prop-types";
 
+ThemeProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 // Create the ThemeContext
 const ThemeContext = createContext();
 
 // ThemeContext Provider Component
 export const ThemeProvider = ({ children }) => {
   // Retrieve theme from localStorage or default to 'bluesh'
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'bluesh');
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "bluesh");
 
   useEffect(() => {
     // Save the theme to localStorage whenever it changes
-    localStorage.setItem('theme', theme);
+    localStorage.setItem("theme", theme);
 
     // Apply the theme class to the document's root element (HTML tag)
     document.documentElement.className = theme;
   }, [theme]);
 
   // Toggle between the three themes
-  const toggleTheme = (newTheme) => {
-    setTheme(newTheme);
-  };
+  const toggleTheme = (newTheme) => {};
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
