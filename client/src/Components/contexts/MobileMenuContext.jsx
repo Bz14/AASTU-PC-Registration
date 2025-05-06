@@ -5,10 +5,6 @@ const MobileMenuContext = createContext();
 
 export const useMobileMenu = () => {};
 
-MobileMenuProvider.propTypes = {
-  children: PropTypes.node.isRequired,
-};
-
 export const MobileMenuProvider = ({ children }) => {
   const [isMobileMenuVisible, setIsMobileMenuVisible] = useState(false);
 
@@ -24,4 +20,8 @@ export const MobileMenuProvider = ({ children }) => {
       {children}
     </MobileMenuContext.Provider>
   );
+};
+
+MobileMenuProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

@@ -5,10 +5,6 @@ const LoginContext = createContext();
 
 export const useLogin = () => {};
 
-LoginProvider.propTypes = {
-  children: PropTypes.node.isRequired,
-};
-
 export const LoginProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
@@ -29,4 +25,8 @@ export const LoginProvider = ({ children }) => {
       {children}
     </LoginContext.Provider>
   );
+};
+
+LoginProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
