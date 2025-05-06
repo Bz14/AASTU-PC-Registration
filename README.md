@@ -12,8 +12,8 @@ The PC Registration System is designed to prevent the unauthorized removal of st
   - **Tailwind CSS**: A utility-first CSS framework for styling.
 
 - **Backend:** 
-  - **PHP**: A popular server-side scripting language.
-  - **Laravel**: A powerful PHP framework for building web applications.
+  - **Javascript*: A popular server-side scripting language.
+  - **ExpressJs**: A powerful Javascript framework for building web applications.
 
 ## Features
 
