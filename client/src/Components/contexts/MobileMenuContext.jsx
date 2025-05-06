@@ -1,9 +1,11 @@
-import { createContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import PropTypes from "prop-types";
 
 const MobileMenuContext = createContext();
 
-export const useMobileMenu = () => {};
+export const useMobileMenu = () => {
+  return useContext(MobileMenuContext);
+};
 
 export const MobileMenuProvider = ({ children }) => {
   const [isMobileMenuVisible, setIsMobileMenuVisible] = useState(false);
