@@ -21,7 +21,9 @@ export const ThemeProvider = ({ children }) => {
   }, [theme]);
 
   // Toggle between the three themes
-  const toggleTheme = (newTheme) => {};
+  const toggleTheme = (newTheme) => {
+    setTheme(newTheme);
+  };
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
