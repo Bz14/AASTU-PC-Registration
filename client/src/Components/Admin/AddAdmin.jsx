@@ -11,7 +11,7 @@ const AddNewAdminForm = ({ isOpen, onClose }) => {
   const [adminPassword, setAdminPassword] = useState("");
   const schema = yup.object().shape({
     adminName: yup.string().required("Admin Name is required"),
-    adminEmailEmail: yup
+    adminEmail: yup
       .string()
       .email("Invalid email format")
       .required("Admin Email is required"),
