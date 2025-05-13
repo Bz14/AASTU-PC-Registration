@@ -51,23 +51,17 @@ The PC Registration System is designed to prevent the unauthorized removal of st
 
 2. Install Composer dependencies:
    ```bash
-   composer install
+   npm install
    ```
 
 3. Set up your `.env` file:
    ```bash
    cp .env.example .env
-   php artisan key:generate
    ```
 
-4. Run migrations:
+4. Start the server:
    ```bash
-   php artisan migrate
-   ```
-
-5. Start the server:
-   ```bash
-   php artisan serve
+   npm run dev
    ```
 
 ## Usage
